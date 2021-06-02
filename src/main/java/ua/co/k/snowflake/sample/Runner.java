@@ -15,6 +15,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static java.util.Collections.emptyMap;
 
@@ -53,10 +59,15 @@ public class Runner {
     }
 
     private void processFromSnowPipe() throws Exception {
+        String pipes = template.execute("show pipes;", this::statementToString);
+        log.info("pipes: {}", pipes);
         // works only if uncomment these lines, very weird
 //        template.execute("create or replace pipe DEMO_DB.PUBLIC.NAMES_PIPE as\n" +
 //                "copy into DEMO_DB.PUBLIC.NAMES from @DEMO_DB.PUBLIC.INTERNAL_STAGE\n" +
 //                "    file_format = (format_name='MY_FORMAT');", PreparedStatement::execute);
+        pipes = template.execute("show pipes;", this::statementToString);
+        log.info("pipes: {}", pipes);
+        
         template.update("delete from NAMES;", emptyMap());
         Integer countBefore = template.queryForObject("select count(*) from NAMES", emptyMap(), Integer.class);
         if(!Files.exists(fileToLoad)) {
@@ -72,6 +83,21 @@ public class Runner {
         
         Integer countAfter = template.queryForObject("select count(*) from NAMES", emptyMap(), Integer.class);
         log.info("countAfter: {}", countAfter);
+    }
+
+    private String statementToString(PreparedStatement preparedStatement) throws SQLException {
+        ResultSet rs = preparedStatement.executeQuery();
+        List rows = new ArrayList();
+        ResultSetMetaData metaData = rs.getMetaData();
+        while (rs.next()) {
+            int columnCount = metaData.getColumnCount();
+            String[] row = new String[columnCount];
+            for (int i = 1; i <= columnCount; i++) {
+                row[i - 1] = rs.getString(i);
+            }
+            rows.add(Arrays.toString(row));
+        }
+        return rows.toString();
     }
 
     private void uploadAndMoveStrategy() {
