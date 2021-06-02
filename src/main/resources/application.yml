@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    driver-class-name: net.snowflake.client.jdbc.SnowflakeDriver
+    url: jdbc:snowflake://pl18490.europe-west4.gcp.snowflakecomputing.com?db=DEMO_DB&schema=PUBLIC
+    username: msangel
+    password: ${SNOWFLAKE_PASSWORD}
