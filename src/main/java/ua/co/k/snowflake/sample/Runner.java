@@ -62,6 +62,10 @@ public class Runner {
         String pipes = template.execute("show pipes;", this::statementToString);
         log.info("pipes: {}", pipes);
         // works only if uncomment these lines, very weird
+        // possible answer: https://snowflakecommunity.force.com/s/question/0D50Z00009bSpIdSAK/how-can-i-load-a-csv-with-the-same-name-as-a-csv-that-had-already-been-loaded-with-snowpipe-
+//      https://stackoverflow.com/questions/59184903/snowpipe-not-working-after-upload-same-file-twice
+        // also take a look: https://community.snowflake.com/s/article/HowTo-Configuration-steps-for-Snowpipe-Auto-Ingest-with-AWS-S3-Stages
+//      http://bifuture.blogspot.com/2020/11/snowflake-loading-data-with-snowpipe-on.html
 //        template.execute("create or replace pipe DEMO_DB.PUBLIC.NAMES_PIPE as\n" +
 //                "copy into DEMO_DB.PUBLIC.NAMES from @DEMO_DB.PUBLIC.INTERNAL_STAGE\n" +
 //                "    file_format = (format_name='MY_FORMAT');", PreparedStatement::execute);
@@ -117,3 +121,6 @@ public class Runner {
     }
 
 }
+
+// some reading:
+// https://toppertips-bx67a.ondigitalocean.app/snowpro-snowpipe-cheat-sheet/
